@@ -20,23 +20,19 @@ build:
         then:
           - cargo auditable install --no-track --locked --bins --all-features --root ${{ PREFIX }} --path .
           # generate shell completions
-          - if: build_platform == host_platform
-            then:
-              - mkdir -p $PREFIX/share/bash-completion/completions $PREFIX/share/fish/vendor_completions.d $PREFIX/share/zsh/site-functions
-              - $PREFIX/bin/erd --completions=bash > $PREFIX/share/bash-completion/completions/erd
-              - $PREFIX/bin/erd --completions=fish > $PREFIX/share/fish/vendor_completions.d/erd.fish
-              - $PREFIX/bin/erd --completions=zsh > $PREFIX/share/zsh/site-functions/_erd
+          - mkdir -p $PREFIX/share/bash-completion/completions $PREFIX/share/fish/vendor_completions.d $PREFIX/share/zsh/site-functions
+          - $PREFIX/bin/erd --completions=bash > $PREFIX/share/bash-completion/completions/erd
+          - $PREFIX/bin/erd --completions=fish > $PREFIX/share/fish/vendor_completions.d/erd.fish
+          - $PREFIX/bin/erd --completions=zsh > $PREFIX/share/zsh/site-functions/_erd
         else:
           - cargo auditable install --no-track --locked --bins --all-features --root %LIBRARY_PREFIX% --path .
           # generate shell completions
-          - if: build_platform == host_platform
-            then:
-              - mkdir %LIBRARY_PREFIX%\share\bash-completion\completions
-              - mkdir %LIBRARY_PREFIX%\share\fish\vendor_completions.d
-              - mkdir %LIBRARY_PREFIX%\share\zsh\site-functions
-              - '%LIBRARY_BIN%\erd.exe --completions=bash > %LIBRARY_PREFIX%\share\bash-completion\completions\erd'
-              - '%LIBRARY_BIN%\erd.exe --completions=fish > %LIBRARY_PREFIX%\share\fish\vendor_completions.d\erd.fish'
-              - '%LIBRARY_BIN%\erd.exe --completions=zsh > %LIBRARY_PREFIX%\share\zsh\site-functions\_erd'
+          - mkdir %LIBRARY_PREFIX%\share\bash-completion\completions
+          - mkdir %LIBRARY_PREFIX%\share\fish\vendor_completions.d
+          - mkdir %LIBRARY_PREFIX%\share\zsh\site-functions
+          - '%LIBRARY_BIN%\erd.exe --completions=bash > %LIBRARY_PREFIX%\share\bash-completion\completions\erd'
+          - '%LIBRARY_BIN%\erd.exe --completions=fish > %LIBRARY_PREFIX%\share\fish\vendor_completions.d\erd.fish'
+          - '%LIBRARY_BIN%\erd.exe --completions=zsh > %LIBRARY_PREFIX%\share\zsh\site-functions\_erd'
       - cargo-bundle-licenses --format yaml --output ./THIRDPARTY.yml
   skip:
     - win
@@ -51,20 +47,18 @@ requirements:
 
 tests:
   - script:
-      - if: build_platform == host_platform
-        then:
-          - erd --help
-          - erd --version
+      - erd --help
+      - erd --version
   - package_contents:
       bin:
         - erd
       files:
-        - if: unix and build_platform == host_platform
+        - if: unix
           then:
             - share/bash-completion/completions/erd
             - share/fish/vendor_completions.d/erd.fish
             - share/zsh/site-functions/_erd
-        - if: win and build_platform == host_platform
+        - if: win
           then:
             - Library/share/bash-completion/completions/erd
             - Library/share/fish/vendor_completions.d/erd.fish
